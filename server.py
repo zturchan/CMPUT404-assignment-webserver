@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import SocketServer
 # coding: utf-8
 
@@ -32,7 +35,39 @@ class MyWebServer(SocketServer.BaseRequestHandler):
     def handle(self):
         self.data = self.request.recv(1024).strip()
         print ("Got a request of: %s\n" % self.data)
-        self.request.sendall("OK")
+	#so we want to split up the request into manageable chunks
+	requestLines = self.data.split("\r\n")
+	line1Elements = requestLines[0].split(" ")
+	requestType = line1Elements[0]
+	requestedFile = line1Elements[1]
+	if(requestedFile == "/"):
+		requestedFile = "index.html"
+		
+
+	if(requestType == "GET"):
+		try:
+			#Handle a get
+			#get the requested file
+			file = open("www/" + requestedFile, 'r')
+			responseText = ""	
+			for line in file:
+				responseText += line
+			self.request.send("HTTP/1.1 200 OK")
+			self.request.send('Content-Type: text/html; encoding=utf8')
+			self.request.send('Content-Length'+ str(len(responseText)))
+			self.request.send('Connection: close')
+			self.request.sendall(responseText)
+		except:
+			self.request.send_error(404, "404 Not FOUND!")	
+	else:
+		self.request.send_error(404, "404 Not FOUND!")
+	self.request.close()
+"""	parts = self.data.split("Host: ")
+	hostparts = parts[1].split("\r\n")
+	host = hostparts[0]
+	print (host)	"""
+
+        
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
