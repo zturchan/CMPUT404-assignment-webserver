@@ -24,7 +24,7 @@ compatible) http://docs.python.org/2/library/socketserver.html
 
 In addition to the above base, additions to server.py are contributed by 
 
-*Zak Turchansky
+* Zak Turchansky
 
 Further help from the same python example page linked above, as well as 
 https://docs.python.org/2/library/socket.html#socket-objects 
