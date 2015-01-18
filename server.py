@@ -35,7 +35,9 @@ import mimetypes
 # Copyright 2015 Zak Turchansky
 # 
 # Parts of the additions have also been derived from the same Python documentation examples linked above, in addition to 
-# https://docs.python.org/2/library/socket.html#socket-objects with the same copyright as described above.
+# https://docs.python.org/2/library/socket.html#socket-objects
+# https://docs.python.org/2/library/mimetypes.html
+# with the same copyright as described above.
 
 
 
