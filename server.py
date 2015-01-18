@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 import SocketServer
 import os
 import mimetypes
-# coding: utf-8
 
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
 # 
