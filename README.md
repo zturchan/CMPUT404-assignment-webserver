@@ -22,5 +22,11 @@ examples thus some of the code is Copyright © 2001-2013 Python
 Software Foundation; All Rights Reserved under the PSF license (GPL
 compatible) http://docs.python.org/2/library/socketserver.html
 
+In addition to the above base, additions to server.py are contributed by 
+
+*Zak Turchansky
+
+Further help from the same python example page linked above, as well as https://docs.python.org/2/library/socket.html#socket-objects 
+
 Consultation:
-- Consulted with Kyle Richelhoff about general concepts related to the project
+- Consulted with Kyle Richelhoff about general concepts related to the project (HTTP/TCP interaction, links to the python socket object doc page)

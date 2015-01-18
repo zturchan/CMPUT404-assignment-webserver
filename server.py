@@ -31,6 +31,13 @@ import mimetypes
 
 # try: curl -v -X GET http://127.0.0.1:8080/
 
+# Additions:
+# Copyright 2015 Zak Turchansky
+# 
+# Parts of the additions have also been derived from the same Python documentation examples linked above, in addition to 
+# https://docs.python.org/2/library/socket.html#socket-objects with the same copyright as described above.
+
+
 
 class MyWebServer(SocketServer.BaseRequestHandler):
     
@@ -44,7 +51,8 @@ class MyWebServer(SocketServer.BaseRequestHandler):
 	requestedFile = line1Elements[1]
 	#Disallow any sort of .. shenanigans
 	if(requestedFile.startswith('/..')):
-		self.request.send("HTTP/1.1 404 Not Found\r\n")
+		self.request.sendall("HTTP/1.1 404 Not Found\r\n\r\n")
+		self.request.sendall("404 - Not Found!")
 	#reroute unspecified files to index of their directory
 	if(requestedFile[-1] == '/'):
 		requestedFile += "index.html"
@@ -58,30 +66,17 @@ class MyWebServer(SocketServer.BaseRequestHandler):
 				responseText += line
 			self.request.send("HTTP/1.1 200 OK\r\n")
 			mimetype, _= mimetypes.guess_type(requestedFile)
-			#if(requestedFile.find(".css") != -1):
-			#	self.request.send('Content-Type: text/css; encoding=utf8')
-			#	print("css found in " + requestedFile)
-			#else:
-			self.request.send('Content-Type: ' + str(mimetype) + '; encoding=utf8\r\n')
-			print("mimetype is " + str(mimetype))
-			print("Response " + responseText)
-			print("length" + str(len(responseText)))
+			self.request.sendall('Content-Type: ' + str(mimetype) + '; encoding=utf8\r\n')
 			self.request.sendall('Content-Length'+ str(len(responseText)) + "\r\n")
 			self.request.sendall('Connection: close' + "\r\n\r\n")
 			self.request.sendall(responseText + "\r\n")
-			print("sent")
 		except:
-			#self.request.send_error(404, "404 Not FOUND!")	
-			self.request.send("HTTP/1.1 404 Not Found\r\n")
+			self.request.sendall("HTTP/1.1 404 Not Found\r\n\r\n")
+			self.request.sendall("404 - Not Found!")
 	else:
-		self.request.send("HTTP/1.1 404 Not Found\r\n")
+		self.request.sendall("HTTP/1.1 404 Not Found\r\n\r\n")
+		self.request.sendall("404 - Not Found!")
 	self.request.close()
-"""	parts = self.data.split("Host: ")
-	hostparts = parts[1].split("\r\n")
-	host = hostparts[0]
-	print (host)	"""
-
-        
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
