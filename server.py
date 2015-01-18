@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import SocketServer
+import os
+import mimetypes
 # coding: utf-8
 
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
@@ -40,10 +42,12 @@ class MyWebServer(SocketServer.BaseRequestHandler):
 	line1Elements = requestLines[0].split(" ")
 	requestType = line1Elements[0]
 	requestedFile = line1Elements[1]
-	if(requestedFile == "/"):
-		requestedFile = "index.html"
-		
-
+	#Disallow any sort of .. shenanigans
+	if(requestedFile.startswith('/..')):
+		self.request.send("HTTP/1.1 404 Not Found\r\n")
+	#reroute unspecified files to index of their directory
+	if(requestedFile[-1] == '/'):
+		requestedFile += "index.html"
 	if(requestType == "GET"):
 		try:
 			#Handle a get
@@ -52,15 +56,25 @@ class MyWebServer(SocketServer.BaseRequestHandler):
 			responseText = ""	
 			for line in file:
 				responseText += line
-			self.request.send("HTTP/1.1 200 OK")
-			self.request.send('Content-Type: text/html; encoding=utf8')
-			self.request.send('Content-Length'+ str(len(responseText)))
-			self.request.send('Connection: close')
-			self.request.sendall(responseText)
+			self.request.send("HTTP/1.1 200 OK\r\n")
+			mimetype, _= mimetypes.guess_type(requestedFile)
+			#if(requestedFile.find(".css") != -1):
+			#	self.request.send('Content-Type: text/css; encoding=utf8')
+			#	print("css found in " + requestedFile)
+			#else:
+			self.request.send('Content-Type: ' + str(mimetype) + '; encoding=utf8\r\n')
+			print("mimetype is " + str(mimetype))
+			print("Response " + responseText)
+			print("length" + str(len(responseText)))
+			self.request.sendall('Content-Length'+ str(len(responseText)) + "\r\n")
+			self.request.sendall('Connection: close' + "\r\n\r\n")
+			self.request.sendall(responseText + "\r\n")
+			print("sent")
 		except:
-			self.request.send_error(404, "404 Not FOUND!")	
+			#self.request.send_error(404, "404 Not FOUND!")	
+			self.request.send("HTTP/1.1 404 Not Found\r\n")
 	else:
-		self.request.send_error(404, "404 Not FOUND!")
+		self.request.send("HTTP/1.1 404 Not Found\r\n")
 	self.request.close()
 """	parts = self.data.split("Host: ")
 	hostparts = parts[1].split("\r\n")
